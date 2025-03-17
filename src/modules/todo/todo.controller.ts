@@ -8,6 +8,7 @@ import {
   Delete,
   UseGuards,
   Request,
+  HttpCode,
 } from '@nestjs/common';
 import { TodoService } from './todo.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
@@ -45,6 +46,7 @@ export class TodoController {
   }
 
   @Delete(':id')
+  @HttpCode(204)
   remove(@Param('id') id: string, @Request() req) {
     return this.todoService.remove(id, req.user.id);
   }
