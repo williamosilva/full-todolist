@@ -2,16 +2,18 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { User } from '../users/entities/user.entity';
+import { ConfigService } from '@nestjs/config';
+import { User } from './entities/user.entity';
 import { FirebaseService } from '../firebase/firebase.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User)
-    private userRepository: Repository<User>,
-    private jwtService: JwtService,
+    public userRepository: Repository<User>,
+    public jwtService: JwtService,
     private firebaseService: FirebaseService,
+    private configService: ConfigService,
   ) {}
 
   async validateFirebaseToken(token: string): Promise<any> {
@@ -33,7 +35,6 @@ export class AuthService {
     });
 
     if (!user) {
-      // Criar novo usuário se não existir
       user = this.userRepository.create({
         email: firebaseUser.email,
         firebaseUid: firebaseUser.uid,
@@ -42,7 +43,6 @@ export class AuthService {
       });
       await this.userRepository.save(user);
     } else if (user.firebaseUid !== firebaseUser.uid) {
-      // Atualizar UID do Firebase se o usuário já existir mas o UID mudou
       user.firebaseUid = firebaseUser.uid;
       await this.userRepository.save(user);
     }
@@ -53,8 +53,13 @@ export class AuthService {
       firebaseUid: user.firebaseUid,
     };
 
+    const jwtExpiration = this.configService.get<string>(
+      'JWT_EXPIRATION',
+      '15m',
+    );
+
     return {
-      access_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload, { expiresIn: jwtExpiration }),
       user: {
         id: user.id,
         email: user.email,
