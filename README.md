@@ -480,7 +480,7 @@ fetch('http://localhost:3000/graphql', {
 - **Testes Automatizados**: Cobertura de testes para controladores e serviços
 - **Tipagem Forte**: Uso de TypeScript para evitar erros em tempo de execução
 - **Segurança**: Implementação de autenticação e autorização
-- 
+
 ### Autor
 
 William Silva
