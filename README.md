@@ -65,6 +65,101 @@ src/
 - **API REST**: Endpoints RESTful para todas as operações
 - **API GraphQL**: Resolvers GraphQL para consultas e mutações
 
+## Pré-requisitos
+
+- Node.js (versão 16.x ou superior)
+- npm ou yarn
+- PostgreSQL
+- Conta no Firebase (para autenticação)
+- Conta no Supabase (para banco de dados)
+
+## Instalação
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/williamosilva/Nest-GraphQL-todolist
+cd Nest-GraphQL-todolist
+```
+
+2. Instale as dependências:
+
+```bash
+npm install
+# ou
+yarn install
+```
+
+3. Configure as variáveis de ambiente:
+
+Crie um arquivo `.env` na raiz do projeto com o seguinte conteúdo:
+
+```env
+# Configurações do Servidor
+PORT=3000
+NODE_ENV=development
+
+# Configurações do Postgres no Supabase
+DB_HOST=db_codigo
+DB_PORT=1234
+DB_USERNAME=db_nome
+DB_PASSWORD=db_password
+DB_DATABASE=postgres
+DB_SYNC=true
+
+# Configurações JWT
+JWT_SECRET=seu_jwt_secret_super_seguro
+JWT_EXPIRATION=15m
+
+# Configurações do Firebase
+FIREBASE_PRIVATE_KEY=sua_api_key
+FIREBASE_CLIENT_EMAIL=seu_email@firebaseapp.com
+FIREBASE_PROJECT_ID=seu_projeto_id
+
+```
+
+## Executando o Projeto
+
+### Desenvolvimento
+
+```bash
+# Modo de desenvolvimento com hot-reload
+npm run start:dev
+# ou
+yarn start:dev
+```
+
+### Produção
+
+```bash
+# Compile o projeto
+npm run build
+# ou
+yarn build
+
+# Inicie o servidor em modo de produção
+npm run start:prod
+# ou
+yarn start:prod
+```
+
+O servidor estará disponível em `http://localhost:3000`.
+
+## Executando Testes
+
+### Testes Unitários
+
+```bash
+# Executa todos os testes unitários
+npm run test
+# ou
+yarn test
+
+# Executa testes com cobertura
+npm run test:cov
+# ou
+yarn test:cov
+
 
 ## Exemplos de Uso
 
