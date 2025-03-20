@@ -1,99 +1,486 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Todo List API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+Este projeto implementa uma API de Todo List utilizando NestJS, com autenticação via Firebase OAuth2 e JWT. Inclui um sistema de CRUD para tarefas e integrações com GraphQL para consultas dinâmicas. O banco de dados é gerenciado pelo Supabase, utilizando PostgreSQL.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Tecnologias Utilizadas
 
-## Description
+### Backend
+- **NestJS**: Framework Node.js para construção de aplicações server-side eficientes e escaláveis
+- **TypeScript**: Linguagem de programação fortemente tipada que compila para JavaScript
+- **PostgreSQL**: Sistema de gerenciamento de banco de dados relacional
+- **TypeORM**: ORM para TypeScript
+- **JWT**: JSON Web Tokens para autenticação segura
+- **GraphQL**: Linguagem de consulta para APIs
+- **Firebase**: Utilizado para o fluxo de autenticação oAuth2 com o Google
+- **Supabase**: Usado para a conexão com o banco Postgresql
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+### Testes
+- **Jest**: Framework de testes para JavaScript
+- **Supertest**: Biblioteca para testes de HTTP
 
-## Project setup
+## Estrutura do Projeto
 
-```bash
-$ npm install
+```
+src/
+├── app.module.ts                 # Módulo principal da aplicação
+├── common/                      
+│   └── guards/                   # Guards para autenticação
+│       ├── gql-auth.guard.ts     # Guard para autenticação GraphQL
+│       └── jwt-auth.guard.ts     # Guard para autenticação JWT
+├── config/                  
+│   └── jwt.strategy.ts           # Estratégia JWT
+├── main.ts                      
+└── modules/                      # Módulos da aplicação
+    ├── auth/                     # Módulo de autenticação
+    │   ├── auth.controller.ts    # Controlador de autenticação
+    │   ├── auth.module.ts        # Módulo de autenticação
+    │   ├── auth.service.ts       # Serviço de autenticação
+    │   ├── entities/             # Entidades relacionadas à autenticação
+    │   │   └── user.entity.ts    # Entidade de usuário
+    │   └── tests/                # Testes para o módulo de autenticação
+    │       ├── auth.controller.spec.ts
+    │       └── auth.service.spec.ts
+    ├── firebase/                 # Módulo de integração com Firebase
+    │   ├── firebase.module.ts    # Módulo Firebase
+    │   └── firebase.service.ts   # Serviço Firebase
+    └── todo/                     # Módulo de tarefas
+        ├── dto/                  # Data Transfer Objects
+        │   ├── create-todo.dto.ts # DTO para criação de tarefas
+        │   └── update-todo.dto.ts # DTO para atualização de tarefas
+        ├── entities/             # Entidades relacionadas às tarefas
+        │   └── todo.entity.ts    # Entidade de tarefa
+        ├── tests/                # Testes para o módulo de tarefas
+        │   └── todo.controller.spec.ts
+        ├── todo.controller.ts    # Controlador de tarefas
+        ├── todo.module.ts        # Módulo de tarefas
+        ├── todo.resolver.ts      # Resolver GraphQL para tarefas
+        └── todo.service.ts       # Serviço de tarefas
 ```
 
-## Compile and run the project
+## Funcionalidades
 
-```bash
-# development
-$ npm run start
+- **Autenticação**: Login com Firebase e geração de JWT
+- **Proteção de Rotas**: Guards para proteger rotas que requerem autenticação
+- **CRUD de Tarefas**: Criar, ler, atualizar e deletar tarefas
+- **API REST**: Endpoints RESTful para todas as operações
+- **API GraphQL**: Resolvers GraphQL para consultas e mutações
 
-# watch mode
-$ npm run start:dev
 
-# production mode
-$ npm run start:prod
+## Exemplos de Uso
+
+### Autenticação
+
+**Endpoint:** `POST /auth/login`
+
+```javascript
+// Login usando token do Firebase
+const response = await fetch('http://localhost:3000/auth/login', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({
+    token: 'seu-token-firebase',
+  }),
+});
+
+// Resposta:
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+}
 ```
 
-## Run tests
+### Gerenciamento de Tarefas
 
-```bash
-# unit tests
-$ npm run test
+#### Criar uma nova tarefa
 
-# e2e tests
-$ npm run test:e2e
+**Endpoint:** `POST /todos`
 
-# test coverage
-$ npm run test:cov
+```javascript
+// Requisição
+fetch('http://localhost:3000/todos', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    title: 'Completar README do projeto',
+    description: 'Adicionar seção de exemplos de uso',
+  }),
+});
+
+// Resposta:
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "title": "Completar README do projeto",
+  "description": "Adicionar seção de exemplos de uso",
+  "completed": false,
+  "userId": "user-uuid-123",
+  "createdAt": "2025-03-20T14:30:00Z",
+  "updatedAt": "2025-03-20T14:30:00Z"
+}
 ```
 
-## Deployment
+#### Listar todas as tarefas
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
+**Endpoint:** `GET /todos`
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+```javascript
+// Requisição
+fetch('http://localhost:3000/todos', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+});
 
-```bash
-$ npm install -g mau
-$ mau deploy
+// Resposta:
+[
+  {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "title": "Completar README do projeto",
+    "description": "Adicionar seção de exemplos de uso",
+    "completed": false,
+    "createdAt": "2025-03-20T14:30:00Z",
+    "updatedAt": "2025-03-20T14:30:00Z"
+  },
+  {
+    "id": "456e7890-e21d-12d3-b456-426614174001",
+    "title": "Implementar autenticação",
+    "description": "Usar Firebase OAuth2",
+    "completed": true,
+    "createdAt": "2025-03-19T10:15:00Z",
+    "updatedAt": "2025-03-20T11:45:00Z"
+  }
+]
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+#### Buscar uma tarefa específica
 
-## Resources
+**Endpoint:** `GET /todos/{id}`
 
-Check out a few resources that may come in handy when working with NestJS:
+```javascript
+// Requisição
+fetch('http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000', {
+  method: 'GET',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+});
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+// Resposta:
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "title": "Completar README do projeto",
+  "description": "Adicionar seção de exemplos de uso",
+  "completed": false,
+  "createdAt": "2025-03-20T14:30:00Z",
+  "updatedAt": "2025-03-20T14:30:00Z"
+}
+```
 
-## Support
+#### Atualizar uma tarefa
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+**Endpoint:** `PATCH /todos/{id}`
 
-## Stay in touch
+```javascript
+// Requisição
+fetch('http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000', {
+  method: 'PATCH',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    title: 'README atualizado',
+    completed: true,
+  }),
+});
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+// Resposta:
+{
+  "id": "123e4567-e89b-12d3-a456-426614174000",
+  "title": "README atualizado",
+  "description": "Adicionar seção de exemplos de uso",
+  "completed": true,
+  "createdAt": "2025-03-20T14:30:00Z",
+  "updatedAt": "2025-03-20T15:45:00Z"
+}
+```
 
-## License
+#### Excluir uma tarefa
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+**Endpoint:** `DELETE /todos/{id}`
+
+```javascript
+// Requisição
+fetch('http://localhost:3000/todos/123e4567-e89b-12d3-a456-426614174000', {
+  method: 'DELETE',
+  headers: {
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+});
+
+// Resposta: Status 204 (No Content)
+```
+
+## GraphQL
+
+
+```
+### Consultas e Mutações
+
+#### Listar todas as tarefas
+
+**Endpoint:** `POST /graphql`
+
+```javascript
+// Consulta
+const GET_TODOS = `
+  query {
+    todos {
+      id
+      title
+      description
+      completed
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+// Requisição
+fetch('http://localhost:3000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    query: GET_TODOS
+  }),
+});
+
+// Resposta:
+{
+  "data": {
+    "todos": [
+      {
+        "id": "123e4567-e89b-12d3-a456-426614174000",
+        "title": "Completar README do projeto",
+        "description": "Adicionar seção de exemplos de uso",
+        "completed": false,
+        "createdAt": "2025-03-20T14:30:00Z",
+        "updatedAt": "2025-03-20T14:30:00Z"
+      },
+      {
+        "id": "456e7890-e21d-12d3-b456-426614174001",
+        "title": "Implementar autenticação",
+        "description": "Usar Firebase OAuth2",
+        "completed": true,
+        "createdAt": "2025-03-19T10:15:00Z",
+        "updatedAt": "2025-03-20T11:45:00Z"
+      }
+    ]
+  }
+}
+```
+
+#### Buscar uma tarefa específica
+
+**Endpoint:** `POST /graphql`
+
+```javascript
+// Consulta
+const GET_TODO = `
+  query($id: ID!) {
+    todo(id: $id) {
+      id
+      title
+      description
+      completed
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+// Requisição
+fetch('http://localhost:3000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    query: GET_TODO,
+    variables: {
+      id: "123e4567-e89b-12d3-a456-426614174000"
+    }
+  }),
+});
+
+// Resposta:
+{
+  "data": {
+    "todo": {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "Completar README do projeto",
+      "description": "Adicionar seção de exemplos de uso",
+      "completed": false,
+      "createdAt": "2025-03-20T14:30:00Z",
+      "updatedAt": "2025-03-20T14:30:00Z"
+    }
+  }
+}
+```
+
+#### Criar uma tarefa
+
+**Endpoint:** `POST /graphql`
+
+```javascript
+// Mutação
+const CREATE_TODO = `
+  mutation($input: CreateTodoDto!) {
+    createTodo(createTodoDto: $input) {
+      id
+      title
+      description
+      completed
+      createdAt
+      updatedAt
+    }
+  }
+`;
+
+// Requisição
+fetch('http://localhost:3000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    query: CREATE_TODO,
+    variables: {
+      input: {
+        title: "Aprender GraphQL",
+        description: "Estudar queries e mutations do GraphQL"
+      }
+    }
+  }),
+});
+
+// Resposta:
+{
+  "data": {
+    "createTodo": {
+      "id": "789e0123-e45f-12d3-c789-426614174002",
+      "title": "Aprender GraphQL",
+      "description": "Estudar queries e mutations do GraphQL",
+      "completed": false,
+      "createdAt": "2025-03-20T16:00:00Z",
+      "updatedAt": "2025-03-20T16:00:00Z"
+    }
+  }
+}
+```
+
+#### Atualizar uma tarefa
+
+**Endpoint:** `POST /graphql`
+
+```javascript
+// Mutação
+const UPDATE_TODO = `
+  mutation($id: ID!, $input: UpdateTodoDto!) {
+    updateTodo(id: $id, updateTodoDto: $input) {
+      id
+      title
+      description
+      completed
+      updatedAt
+    }
+  }
+`;
+
+// Requisição
+fetch('http://localhost:3000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    query: UPDATE_TODO,
+    variables: {
+      id: "789e0123-e45f-12d3-c789-426614174002",
+      input: {
+        completed: true
+      }
+    }
+  }),
+});
+
+// Resposta:
+{
+  "data": {
+    "updateTodo": {
+      "id": "789e0123-e45f-12d3-c789-426614174002",
+      "title": "Aprender GraphQL",
+      "description": "Estudar queries e mutations do GraphQL",
+      "completed": true,
+      "updatedAt": "2025-03-20T16:30:00Z"
+    }
+  }
+}
+```
+
+#### Excluir uma tarefa
+
+**Endpoint:** `POST /graphql`
+
+```javascript
+// Mutação
+const DELETE_TODO = `
+  mutation($id: ID!) {
+    removeTodo(id: $id)
+  }
+`;
+
+// Requisição
+fetch('http://localhost:3000/graphql', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...',
+  },
+  body: JSON.stringify({
+    query: DELETE_TODO,
+    variables: {
+      id: "789e0123-e45f-12d3-c789-426614174002"
+    }
+  }),
+});
+
+// Resposta:
+{
+  "data": {
+    "removeTodo": true
+  }
+}
+```
+
+## Boas Práticas Implementadas
+
+- **Clean Code**: Código limpo e bem organizado
+- **Arquitetura Modular**: Cada funcionalidade em seu próprio módulo
+- **Testes Automatizados**: Cobertura de testes para controladores e serviços
+- **Tipagem Forte**: Uso de TypeScript para evitar erros em tempo de execução
+- **Segurança**: Implementação de autenticação e autorização
+- 
+### Autor
+
+William Silva
