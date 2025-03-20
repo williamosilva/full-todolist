@@ -78,7 +78,7 @@ src/
 1. Clone o repositório:
 
 ```bash
-git clone https://github.com/williamosilva/Nest-GraphQL-todolist
+git clone https://github.com/williamosilva/full-todolist
 cd Nest-GraphQL-todolist
 ```
 
