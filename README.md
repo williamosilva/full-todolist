@@ -118,33 +118,6 @@ FIREBASE_PROJECT_ID=seu_projeto_id
 
 ```
 
-## Executando o Projeto
-
-### Desenvolvimento
-
-```bash
-# Modo de desenvolvimento com hot-reload
-npm run start:dev
-# ou
-yarn start:dev
-```
-
-### Produção
-
-```bash
-# Compile o projeto
-npm run build
-# ou
-yarn build
-
-# Inicie o servidor em modo de produção
-npm run start:prod
-# ou
-yarn start:prod
-```
-
-O servidor estará disponível em `http://localhost:3000`.
-
 ## Executando Testes
 
 ### Testes Unitários
